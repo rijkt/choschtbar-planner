@@ -6,6 +6,8 @@
 yarn install
 
 yarn watch
+
+yarn watch-css
 ```
 
 ## Clean

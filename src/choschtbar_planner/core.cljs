@@ -7,7 +7,7 @@
 
 (defn hello-world []
   [:div
-   [:h1 (:text @app-state)]
+   [:h1.text-4xl.mt-2.font-normal (:text @app-state)]
    [:h3 "Edit this and watch it change!"]])
 
 (defn start []

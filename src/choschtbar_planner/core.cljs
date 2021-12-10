@@ -5,17 +5,17 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(defonce app-state (atom {:text "Hello world!" :localizer (momentLocalizer moment)}))
+(defonce app-state (atom {:localizer (momentLocalizer moment)}))
 
-
-(defn hello-world []
+(defn main []
   [:div
-    [:h1.text-4xl.mt-2.font-normal (:text @app-state)]
-    [:h3 "Edit this and watch it change!"]
-    [(reagent/adapt-react-class Calendar) {:localizer (:localizer @app-state) :events []}]])
+   [:h1.text-4xl.mt-2.font-normal "Deine Touren"]
+   (let [events  [{:title "Test" :start (js/Date.) :end (.add (moment) 2 "hours")}]]
+     [(reagent/adapt-react-class Calendar) {:localizer (:localizer @app-state) :events events
+                                            :style {:height 500} :culture "de-CH"}])])
 
 (defn start []
-  (reagent/render-component [hello-world]
+  (reagent/render-component [main]
                             (. js/document (getElementById "app"))))
 
 (defn ^:export init []

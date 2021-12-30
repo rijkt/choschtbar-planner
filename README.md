@@ -5,19 +5,19 @@
 ``` shell
 yarn install
 
-yarn watch
-
 yarn watch-css
-```
 
-## Clean
-
-``` shell
-yarn clean
+yarn watch
 ```
 
 ## Release
 
 ``` shell
+yarn clean
+
 yarn release
+
+yarn build-css
+
+aws s3 sync public/ s3://choschtbar-planner
 ```

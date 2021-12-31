@@ -19,3 +19,5 @@ pom.xml.asc
 /public/js
 /public/styles.css
 .rebel_readline_history
+*.zip
+

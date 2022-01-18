@@ -7,7 +7,7 @@ export const handler = async () => {
             Bucket: 'choschtbar-data',
             Key: 'db.json',
             ExpressionType: 'SQL',
-            Expression: 'SELECT * FROM S3Object s',
+            Expression: 'SELECT shifts FROM S3Object[*].shifts',
             InputSerialization: {
                 JSON: {
                     Type: 'DOCUMENT'

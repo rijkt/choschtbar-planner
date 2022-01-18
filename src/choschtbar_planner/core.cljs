@@ -18,8 +18,8 @@
       (swap! app-state assoc :shifts (:body response))))
 
 (defn to-event [shift]
-  {:title (str (:location shift) " - " (:notes shift))
-   :start (moment/unix (:startTime shift)) :end (moment/unix (:endTime shift))})
+  {:id (uuid (:id shift)) :title (str (:location shift) " - " (:notes shift))
+   :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))})
 
 (defn main []
   [:div

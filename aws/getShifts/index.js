@@ -1,4 +1,5 @@
 import {S3Client, SelectObjectContentCommand} from "@aws-sdk/client-s3"; // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html
+import {toUtf8} from "@aws-sdk/util-utf8-node";
 
 export const handler = async () => {
     const client = new S3Client({ region: "eu-central-1" });
@@ -25,7 +26,7 @@ export const handler = async () => {
     for await (const event of events) {
         if (event.Records) {
             const record = event.Records.Payload; // Uint8Array
-            responseBuffer += String.fromCharCode.apply(null, record);
+            responseBuffer += toUtf8(record);
         }
     }
     const response = {

@@ -803,7 +803,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@aws-sdk/util-utf8-node@3.47.0":
+"@aws-sdk/util-utf8-node@3.47.0", "@aws-sdk/util-utf8-node@^3.47.0":
   version "3.47.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/util-utf8-node/-/util-utf8-node-3.47.0.tgz#0c9228bc734e71c02df926d92d9521ac6dd04afe"
   integrity sha512-zbcF4zYPta/5tsogtRQ99uPyEB2WGaOyybRaS4cGPhtLiRdA/1wcwmld8ctEaCCf4m4wr2Vu6U9v3SnY92V55w==

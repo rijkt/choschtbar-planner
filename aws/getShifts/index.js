@@ -36,7 +36,7 @@ export const handler = async () => {
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
-        body
+        body: JSON.stringify(body)
     };
     return response;
 };

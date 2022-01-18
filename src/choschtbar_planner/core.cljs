@@ -3,10 +3,13 @@
   (:require [reagent.core :as reagent :refer [atom]]
             ["react-big-calendar" :refer (Calendar momentLocalizer)]
             ["moment" :as moment]
+            ["moment/locale/de-ch" :as locale] ; import for side effect
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]))
 
 ;; define your app data so that it doesn't get over-written on reload
+
+(moment/locale "de-CH")
 
 (defonce app-state (atom {:shifts [] :localizer (momentLocalizer moment)}))
 

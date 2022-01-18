@@ -29,9 +29,14 @@ export const handler = async () => {
             responseBuffer += toUtf8(record);
         }
     }
+    const parsed =  JSON.parse(responseBuffer);
+    const body = parsed.shifts.filter(item => item) // filter out null values and flatten
     const response = {
         statusCode: 200,
-        body: JSON.parse(responseBuffer)
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        body
     };
     return response;
 };

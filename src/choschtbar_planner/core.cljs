@@ -13,8 +13,8 @@
 
 (defonce app-state (atom {:shifts [] :localizer (momentLocalizer moment)}))
 
-(go (let [response (<! (http/post "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
-                                  {:with-credentials? false}))]
+(go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
+          response (<! (http/post api {:with-credentials? false}))]
       (swap! app-state assoc :shifts (:body response))))
 
 (defn to-event [shift]
@@ -31,7 +31,7 @@
 
 (defn main []
   [:div
-   [:h1.text-4xl.mt-2.font-normal "Deine Touren"]
+   [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
    (let [events (map to-event (:shifts @app-state))]
      [(reagent/adapt-react-class Calendar) {:localizer (:localizer @app-state) :events events
                                             :style {:height 500}

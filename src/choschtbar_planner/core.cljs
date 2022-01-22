@@ -18,15 +18,21 @@
       (swap! app-state assoc :shifts (:body response))))
 
 (defn to-event [shift]
-  {:id (uuid (:id shift)) :title (str (:location shift) " - " (:notes shift))
+  {:id (uuid (:id shift)) :title (str (:location shift) " - " (:notes shift)) :color (:color shift)
    :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))})
+
+(defn make-event-style [event start end isSelected]
+  (let [event (js->clj event :keywordize-keys true)
+        bg-color (:color event)]
+    (clj->js {:style {:backgroundColor bg-color}})))
 
 (defn main []
   [:div
    [:h1.text-4xl.mt-2.font-normal "Deine Touren"]
    (let [events (map to-event (:shifts @app-state))]
      [(reagent/adapt-react-class Calendar) {:localizer (:localizer @app-state) :events events
-                                            :style {:height 500} :culture "de-CH"}])])
+                                            :style {:height 500}
+                                            :eventPropGetter make-event-style}])])
 
 (defn start []
   (reagent/render-component [main]

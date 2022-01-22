@@ -23,8 +23,10 @@
 
 (defn make-event-style [event start end isSelected]
   (let [event (js->clj event :keywordize-keys true)
-        bg-color (:color event)]
-    (clj->js {:style {:backgroundColor bg-color}})))
+        bg-color (:color event)
+        volunteer (:volunteer event)]
+    (clj->js {:style (if volunteer {:backgroundColor bg-color}
+                         {:backgroundColor "red" :borderStyle "dashed solid" :borderWidth 1})})))
 
 (defn main []
   [:div

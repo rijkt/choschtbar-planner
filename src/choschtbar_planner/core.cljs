@@ -18,9 +18,12 @@
       (swap! app-state assoc :shifts (:body response))))
 
 (defn to-event [shift]
-  {:id (uuid (:id shift)) :title (str (:location shift) " - " (:notes shift)) :color (:color shift)
-   :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))
-   :volunteer (:volunteer shift)})
+  (let [note (:notes shift)
+        location (:location shift)
+        title (if note (str location  " - " note location) location)]
+    {:id (uuid (:id shift)) :title title :color (:color shift)
+     :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))
+     :volunteer (:volunteer shift)}))
 
 (defn make-event-style [event start end isSelected]
   (let [event (js->clj event :keywordize-keys true)

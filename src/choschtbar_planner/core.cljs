@@ -19,7 +19,8 @@
 
 (defn to-event [shift]
   {:id (uuid (:id shift)) :title (str (:location shift) " - " (:notes shift)) :color (:color shift)
-   :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))})
+   :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))
+   :volunteer (:volunteer shift)})
 
 (defn make-event-style [event start end isSelected]
   (let [event (js->clj event :keywordize-keys true)

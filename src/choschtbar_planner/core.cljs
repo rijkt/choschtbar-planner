@@ -8,7 +8,8 @@
 (defonce app-state (atom {:shifts []}))
 
 (defn main []
-  (choschtbar-planner.calendar/cal {:shifts (:shifts @app-state) :localizer (:localizer @app-state)}))
+  [:div
+   [choschtbar-planner.calendar/cal @app-state]])
 
 (defn start []
   (moment/locale "de-CH") ; set up locale configuration

@@ -3,17 +3,24 @@
             ["moment" :as moment]
             ["moment/locale/de-ch" :as locale] ; import side effect: enables locale
             ["react-big-calendar" :refer (momentLocalizer)]
+            [accountant.core :as accountant]
+            [clojure.core.match :refer (match)]
             [choschtbar-planner.calendar]))
 
 (defonce app-state (atom {:shifts []}))
 
 (defn main []
   [:div
-   [choschtbar-planner.calendar/cal @app-state]])
+   (match [(:path @app-state)]
+          [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state]
+          :else [:p "404"])])
 
 (defn start []
   (moment/locale "de-CH") ; set up locale configuration
   (swap! app-state assoc :localizer (momentLocalizer moment)) ; save configured localizer
+  (accountant/configure-navigation!
+   {:nav-handler (fn [path] (swap! app-state assoc :path path))
+    :path-exists? (fn [path] true)}) ; todo: integrate bidi
   (reagent/render-component [main]
                             (. js/document (getElementById "app"))))
 

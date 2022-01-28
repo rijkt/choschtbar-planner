@@ -10,10 +10,9 @@
 (defonce app-state (atom {:shifts []}))
 
 (defn main []
-  [:div
-   (match [(:path @app-state)]
-          [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state]
-          :else [:p "404"])])
+  (match [(:path @app-state)]
+         [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state]
+         :else [:p "404"]))
 
 (defn start []
   (moment/locale "de-CH") ; set up locale configuration

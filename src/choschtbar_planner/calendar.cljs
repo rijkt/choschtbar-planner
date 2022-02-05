@@ -7,7 +7,7 @@
             [cljs.core.async :refer [<!]]
             [accountant.core :as accountant]))
 
-(defn to-event [shift]
+(defn- to-event [shift]
   (let [note (:notes shift)
         location (:location shift)
         title (if note (str location  " - " note) location)
@@ -18,12 +18,17 @@
         volunteer (:volunteer shift)]
     {:id id :title title :color color :start start :end end :volunteer volunteer}))
 
-(defn make-event-style [event start end isSelected]
+(defn- make-event-style [event start end isSelected]
   (let [event (js->clj event :keywordize-keys true)
         bg-color (:color event)
         volunteer (:volunteer event)]
     (clj->js {:style (if volunteer {:backgroundColor bg-color}
                          {:backgroundColor "red" :borderStyle "dashed solid" :borderWidth 1})})))
+
+(defn- select-event [dispatch]
+  #(do
+     (dispatch (js->clj %1 :keywordize-keys true))
+     (accountant/navigate! "detail")))
 
 (defn cal [app-state dispatch-selected]
   (let [state (reagent/atom {:shifts []})]
@@ -37,5 +42,5 @@
          [(reagent/adapt-react-class Calendar) {:localizer (:localizer app-state) :events events
                                                 :style {:height 500}
                                                 :selectable true
-                                                :onSelectEvent #(do (dispatch-selected (js->clj %1)) (accountant/navigate! "detail"))
+                                                :onSelectEvent (select-event dispatch-selected)
                                                 :eventPropGetter make-event-style}])])))

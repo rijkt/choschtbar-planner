@@ -24,7 +24,7 @@
     (clj->js {:style (if volunteer {:backgroundColor bg-color}
                          {:backgroundColor "red" :borderStyle "dashed solid" :borderWidth 1})})))
 
-(defn cal [app-state]
+(defn cal [app-state dispatch-selected]
   (let [state (reagent/atom {:shifts []})]
     (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
               response (<! (http/post api {:with-credentials? false}))]
@@ -35,4 +35,6 @@
        (let [events (map to-event (:shifts @state))]
          [(reagent/adapt-react-class Calendar) {:localizer (:localizer app-state) :events events
                                                 :style {:height 500}
+                                                :selectable true
+                                                :onSelectEvent #(dispatch-selected (js->clj %1))
                                                 :eventPropGetter make-event-style}])])))

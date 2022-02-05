@@ -7,11 +7,11 @@
             [clojure.core.match :refer (match)]
             [choschtbar-planner.calendar]))
 
-(defonce app-state (atom {:shifts []}))
+(defonce app-state (atom {:shifts [] :selected nil}))
 
 (defn main []
   (match [(:path @app-state)]
-         [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state]
+         [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state #(swap! app-state assoc :selected %)]
          :else [:p "404"]))
 
 (defn start []

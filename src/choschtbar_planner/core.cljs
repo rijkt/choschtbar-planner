@@ -5,13 +5,15 @@
             ["react-big-calendar" :refer (momentLocalizer)]
             [accountant.core :as accountant]
             [clojure.core.match :refer (match)]
-            [choschtbar-planner.calendar]))
+            [choschtbar-planner.calendar]
+            [choschtbar-planner.shift-detail]))
 
 (defonce app-state (atom {:shifts [] :selected nil}))
 
 (defn main []
   (match [(:path @app-state)]
          [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state #(swap! app-state assoc :selected %)]
+         ["detail"] (choschtbar-planner.shift-detail/detail (:selected @app-state))
          :else [:p "404"]))
 
 (defn start []

@@ -4,7 +4,8 @@
             ["react-big-calendar" :refer (Calendar)]
             ["moment" :as moment]
             [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]))
+            [cljs.core.async :refer [<!]]
+            [accountant.core :as accountant]))
 
 (defn to-event [shift]
   (let [note (:notes shift)
@@ -36,5 +37,5 @@
          [(reagent/adapt-react-class Calendar) {:localizer (:localizer app-state) :events events
                                                 :style {:height 500}
                                                 :selectable true
-                                                :onSelectEvent #(dispatch-selected (js->clj %1))
+                                                :onSelectEvent #(do (dispatch-selected (js->clj %1)) (accountant/navigate! "detail"))
                                                 :eventPropGetter make-event-style}])])))

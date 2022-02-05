@@ -9,7 +9,7 @@
 (defn to-event [shift]
   (let [note (:notes shift)
         location (:location shift)
-        title (if note (str location  " - " note location) location)
+        title (if note (str location  " - " note) location)
         id (uuid (:id shift))
         color (:color shift)
         start (.toDate (moment/unix (:startTime shift)))

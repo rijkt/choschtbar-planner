@@ -9,10 +9,13 @@
 (defn to-event [shift]
   (let [note (:notes shift)
         location (:location shift)
-        title (if note (str location  " - " note location) location)]
-    {:id (uuid (:id shift)) :title title :color (:color shift)
-     :start (.toDate (moment/unix (:startTime shift))) :end (.toDate (moment/unix (:endTime shift)))
-     :volunteer (:volunteer shift)}))
+        title (if note (str location  " - " note location) location)
+        id (uuid (:id shift))
+        color (:color shift)
+        start (.toDate (moment/unix (:startTime shift)))
+        end (.toDate (moment/unix (:endTime shift)))
+        volunteer (:volunteer shift)]
+    {:id id :title title :color color :start start :end end :volunteer volunteer}))
 
 (defn make-event-style [event start end isSelected]
   (let [event (js->clj event :keywordize-keys true)

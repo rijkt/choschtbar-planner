@@ -17,9 +17,9 @@
       [:p.my-3 (str (.format start "HH:mm") " bis " (.format end "HH:mm"))] ; todo: add volunteers
       ]
      (if (or volunteer (seq volunteer))
-       [:button.bg-blue-500.hover:bg-blue-700.text-white.font-bold.rounded.py-2.px-4.md:px-10
-        {:type "button" :on-click #(js/alert "Dankeschön!")}
-        [:p "Freiwillig melden"]]
        [:button.bg-red-500.hover:bg-red-700.text-white.font-bold.rounded.py-2.px-4
         {:type "button" :on-click #(js/alert "Schade!")}
-        [:p "Abmelden"]])])) ; redirect to another page, confirm there
+        [:p "Abmelden"]]
+       [:button.bg-blue-500.hover:bg-blue-700.text-white.font-bold.rounded.py-2.px-4.md:px-10
+        {:type "button" :on-click #(js/alert "Dankeschön!")}
+        [:p "Freiwillig melden"]])])) ; redirect to another page, confirm there

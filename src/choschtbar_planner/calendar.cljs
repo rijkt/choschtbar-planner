@@ -31,12 +31,13 @@
      (accountant/navigate! "detail")))
 
 (defn cal [shifts dispatch-shifts localizer dispatch-selected]
-  (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
-            response (<! (http/post api {:with-credentials? false}))
-            body (:body response) ; array of shifts
-            shifts-update (into shifts (map (fn [shift] [(:id shift) shift]) body))]
-        (dispatch-shifts shifts-update)))
-  (fn []
+  (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"]
+        (->>  (<! (http/post api {:with-credentials? false}))
+              :body ; array of shifts
+              (map (fn [shift] [(:id shift) shift]))
+              (into shifts)
+              (dispatch-shifts))))
+  (fn [shifts dispatch-shifts localizer dispatch-selected]
     [:div
      [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
      (let [events (map to-event (vals shifts))]

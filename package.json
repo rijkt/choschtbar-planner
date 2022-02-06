@@ -9,6 +9,7 @@
     "build-css": "./node_modules/postcss-cli/index.js src/styles/style.css -o ./public/styles.css"
   },
   "dependencies": {
+    "@heroicons/react": "^1.0.5",
     "create-react-class": "^15.6.2",
     "moment": "^2.29.1",
     "react": "^16.0.0",

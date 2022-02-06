@@ -11,7 +11,7 @@
   (let [note (:notes shift)
         location (:location shift)
         title (if note (str location  " - " note) location)
-        id (uuid (:id shift))
+        id (:id shift)
         color (:color shift)
         start (.toDate (moment/unix (:startTime shift)))
         end (.toDate (moment/unix (:endTime shift)))
@@ -30,19 +30,18 @@
      (dispatch (js->clj %1 :keywordize-keys true))
      (accountant/navigate! "detail")))
 
-(defn cal [app-state dispatch-selected]
-  (let [state (atom {:shifts {}})]
-    (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
-              response (<! (http/post api {:with-credentials? false}))
-              body (:body response) ; array of shifts
-              shifts-update (into (:shifts app-state) (map (fn [shift] [(:id shift) shift]) body))]
-          (swap! state assoc :shifts shifts-update)))
-    (fn []
-      [:div
-       [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
-       (let [events (map to-event (vals (:shifts @state)))]
-         [(reagent/adapt-react-class Calendar) {:localizer (:localizer app-state) :events events
-                                                :style {:height 500}
-                                                :selectable true
-                                                :onSelectEvent (select-event dispatch-selected)
-                                                :eventPropGetter make-event-style}])])))
+(defn cal [shifts dispatch-shifts localizer dispatch-selected]
+  (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"
+            response (<! (http/post api {:with-credentials? false}))
+            body (:body response) ; array of shifts
+            shifts-update (into shifts (map (fn [shift] [(:id shift) shift]) body))]
+        (dispatch-shifts shifts-update)))
+  (fn []
+    [:div
+     [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
+     (let [events (map to-event (vals shifts))]
+       [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
+                                              :style {:height 500}
+                                              :selectable true
+                                              :onSelectEvent (select-event dispatch-selected)
+                                              :eventPropGetter make-event-style}])]))

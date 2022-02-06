@@ -12,8 +12,9 @@
 
 (defn main []
   (match [(:path @app-state)]
-         [(:or nil "/")] [choschtbar-planner.calendar/cal @app-state #(swap! app-state assoc :selected %)]
-         ["detail"] (choschtbar-planner.shift-detail/detail (:selected @app-state))
+         [(:or nil "/")] [choschtbar-planner.calendar/cal (:shifts @app-state) #(swap! app-state assoc :shifts %)
+                          (:localizer @app-state) #(swap! app-state assoc :selected %)]
+         ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @app-state) (:id (:selected @app-state))))
          :else [:p "404"]))
 
 (defn start []

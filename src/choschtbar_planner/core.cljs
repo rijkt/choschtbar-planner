@@ -8,7 +8,7 @@
             [choschtbar-planner.calendar]
             [choschtbar-planner.shift-detail]))
 
-(defonce app-state (atom {:shifts [] :selected nil}))
+(defonce app-state (atom {:shifts {} :selected nil}))
 
 (defn main []
   (match [(:path @app-state)]

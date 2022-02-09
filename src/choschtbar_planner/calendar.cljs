@@ -40,9 +40,12 @@
   (fn [shifts dispatch-shifts localizer dispatch-selected]
     [:div
      [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
-     (let [events (map to-event (vals shifts))]
+     (let [events (map to-event (vals shifts))
+           messages {:month "Monat" :today "Heute" :previous "Zurück" :next "Weiter"
+                     :date "Datum" :time "Zeit" :event "Tour"}]
        [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
-                                              :style {:height 500}
-                                              :selectable true
+                                              :style {:height 700}
+                                              :views {:month true :agenda true}
+                                              :messages messages :selectable true
                                               :onSelectEvent (select-event dispatch-selected)
                                               :eventPropGetter make-event-style}])]))

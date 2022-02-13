@@ -38,8 +38,6 @@
               (into shifts)
               (dispatch-shifts))))
   (fn [shifts dispatch-shifts localizer dispatch-selected]
-    [:div
-     [:h1.text-4xl.mt-2.font-normal.mb-4 "Deine Touren"]
      (let [events (map to-event (vals shifts))
            messages {:month "Monat" :today "Heute" :previous "Zurück" :next "Weiter"
                      :date "Datum" :time "Zeit" :event "Tour"}]
@@ -48,4 +46,4 @@
                                               :views {:month true :agenda true}
                                               :messages messages :selectable true
                                               :onSelectEvent (select-event dispatch-selected)
-                                              :eventPropGetter make-event-style}])]))
+                                              :eventPropGetter make-event-style}])))

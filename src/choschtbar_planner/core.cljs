@@ -6,16 +6,31 @@
             [accountant.core :as accountant]
             [clojure.core.match :refer (match)]
             [choschtbar-planner.calendar]
-            [choschtbar-planner.shift-detail]))
+            [choschtbar-planner.shift-detail]
+            [choschtbar-planner.admin]))
 
 (defonce app-state (atom {:shifts {} :selected nil})) ; todo: split up
 
 (defn main []
-  (match [(:path @app-state)]
-         [(:or nil "/")] [choschtbar-planner.calendar/cal (:shifts @app-state) #(swap! app-state assoc :shifts %)
-                          (:localizer @app-state) #(swap! app-state assoc :selected %)]
-         ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @app-state) (:id (:selected @app-state))))
-         :else [:p "404"]))
+  [:div
+   [:nav
+    [:ul.flex.flex-row.justify-evenly.md:justify-end.my-5
+     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
+      {:onClick #(accountant/navigate! "/")} "Meine Touren"]
+     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
+      "Alle Touren"]
+     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
+      {:onClick #(accountant/navigate! "admin")} "Administration"]
+     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
+      "Logout"]]
+    [:hr]]
+   [:div.mt-6
+   (match [(:path @app-state)]
+          [(:or nil "/")] [choschtbar-planner.calendar/cal (:shifts @app-state) #(swap! app-state assoc :shifts %)
+                           (:localizer @app-state) #(swap! app-state assoc :selected %)]
+          ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @app-state) (:id (:selected @app-state))))
+          ["admin"] [choschtbar-planner.admin/root]
+          :else [:p "404"])]])
 
 (defn start []
   (moment/locale "de-CH") ; set up locale configuration

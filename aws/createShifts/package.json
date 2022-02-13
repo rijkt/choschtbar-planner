@@ -1,0 +1,13 @@
+{
+    "name": "createShifts",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "build" : "shadow-cljs release :lambda --debug",
+        "predeploy": "npm run build",
+        "deploy": "cd dist/lambda && zip lambda.zip index.js && aws lambda update-function-code --function-name create-shift --zip-file fileb://lambda.zip "
+    },
+    "devDependencies": {
+        "shadow-cljs": "2.17.2"
+    }
+}

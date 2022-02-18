@@ -3,11 +3,15 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "build" : "shadow-cljs release :lambda --debug",
+        "clean": "rm -r dist",
+        "build": "shadow-cljs release :lambda --debug",
         "predeploy": "npm run build",
-        "deploy": "cd dist/lambda && zip lambda.zip index.js && aws lambda update-function-code --function-name create-shift --zip-file fileb://lambda.zip "
+        "deploy": "zip -r dist/lambda/lambda.zip node_modules package.json && cd dist/lambda && zip lambda.zip index.js && aws lambda update-function-code --function-name create-shift --zip-file fileb://lambda.zip "
     },
     "devDependencies": {
         "shadow-cljs": "2.17.2"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.51.0"
     }
 }

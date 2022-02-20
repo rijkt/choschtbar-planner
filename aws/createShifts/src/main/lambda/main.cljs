@@ -8,9 +8,16 @@
 (def ^js client (S3Client. (clj->js {:region "eu-central-1"})))
 
 (def dummy 
-  (clj->js {:statusCode 200
+  (clj->js {:statusCode 201
             :body       "Created"
             :headers    {"Content-Type" "application/json"}}))
+
+(defn get-body [event]
+  (-> event
+      (js->clj :keywordize-keys true)
+      :body
+      (js/JSON.parse)
+      (js->clj :keywordize-keys true)))
 
 (defn wrap-as-promise
   [channel]
@@ -29,11 +36,13 @@
                         (<p!)
                         (js->clj :keywordize-keys true))))))
 
-(defn handler [event context]
-  (let [response-c (chan 1)
+(defn handler [event]
+  (let [to-create (get-body event)
+        response-c (chan 1)
         response-promise (wrap-as-promise response-c)
         db-c (chan 1)]
     (get-db db-c)
+    (prn to-create)
     (go
       (prn (<! db-c))
       (>! response-c dummy))

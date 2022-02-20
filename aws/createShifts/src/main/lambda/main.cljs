@@ -23,9 +23,12 @@
         cmd-input (clj->js {:Bucket "choschtbar-data" :Key "db.json"})
         cmd (GetObjectCommand. cmd-input)]
     (go
-      (let [response (<p! (.send client cmd))
-            body (.-Body response ) ; IncomingMessage : stream.Readable
-            res (Response. body)]
-        (prn (<p! (.json res)))
-        (>! chanl dummy)))
+      (-> (.send client cmd)
+          (<p!)
+          (.-Body) ; IncomingMessage : stream.Readable
+          (Response.)
+          (.json)
+          (<p!)
+          (prn))
+      (>! chanl dummy))
     promise)) ; make it an async function handler to avoid callback hell

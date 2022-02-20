@@ -7,9 +7,9 @@
 
 (def ^js client (S3Client. (clj->js {:region "eu-central-1"})))
 
-(def dummy 
+(defn make-response [shift] 
   (clj->js {:statusCode 201
-            :body       "Created"
+            :body       (js/JSON.stringify (clj->js shift))
             :headers    {"Content-Type" "application/json"}}))
 
 (defn get-body [event]
@@ -17,7 +17,8 @@
       (js->clj :keywordize-keys true)
       :body
       (js/JSON.parse)
-      (js->clj :keywordize-keys true)))
+      (js->clj :keywordize-keys true)
+      (assoc :id (str (random-uuid)))))
 
 (defn wrap-as-promise
   [channel]
@@ -37,7 +38,7 @@
                         (js->clj :keywordize-keys true))))))
 
 (defn handler [event]
-  (let [to-create (get-body event)
+  (let [to-create (get-body event) ; todo: add validation
         response-c (chan 1)
         response-promise (wrap-as-promise response-c)
         db-c (chan 1)]
@@ -45,5 +46,5 @@
     (prn to-create)
     (go
       (prn (<! db-c))
-      (>! response-c dummy))
+      (>! response-c (make-response to-create)))
     response-promise)) ; make it an async function handler to avoid callback hell

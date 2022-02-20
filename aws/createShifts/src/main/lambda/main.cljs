@@ -1,6 +1,7 @@
 (ns lambda.main
   (:require
    ["@aws-sdk/client-s3" :refer (S3Client GetObjectCommand)]
+   ["node-fetch" :refer (Response)]
    [cljs.core.async :refer [go <! >! chan]]
    [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -23,6 +24,8 @@
         cmd (GetObjectCommand. cmd-input)]
     (go
       (let [response (<p! (.send client cmd))
-            body (.-Body response )] ; todo: handle response
+            body (.-Body response ) ; IncomingMessage : stream.Readable
+            res (Response. body)]
+        (prn (<p! (.json res)))
         (>! chanl dummy)))
     promise)) ; make it an async function handler to avoid callback hell

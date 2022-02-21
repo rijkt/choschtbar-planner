@@ -1,6 +1,6 @@
 (ns lambda.main
   (:require
-   ["@aws-sdk/client-s3" :refer (S3Client GetObjectCommand)]
+   ["@aws-sdk/client-s3" :refer (S3Client GetObjectCommand PutObjectCommand)]
    ["node-fetch" :refer (Response)]
    [cljs.core.async :refer [go <! >! chan put!]]
    [cljs.core.async.interop :refer-macros [<p!]]))
@@ -37,14 +37,26 @@
                         (<p!)
                         (js->clj :keywordize-keys true))))))
 
+(defn put-db [update update-c]
+  (let [body (js/JSON.stringify (clj->js update))
+        cmd-input  #js {"Bucket" "choschtbar-data" "Key" "db.json" "Body" body}
+        cmd (PutObjectCommand. cmd-input)]
+    (go
+      (prn (js/JSON.stringify cmd-input))
+      (>! update-c (-> (.send client cmd)
+                       (<p!)))))) ; don't parse the response for now
+
 (defn handler [event]
   (let [to-create (get-body event) ; todo: add validation
         response-c (chan 1)
         response-promise (wrap-as-promise response-c)
-        db-c (chan 1)]
+        db-c (chan 1)
+        update-c (chan 1)]
     (get-db db-c)
     (prn to-create)
     (go
-      (prn (<! db-c))
-      (>! response-c (make-response to-create)))
+      (let [update (update-in (<! db-c) [:shifts] conj to-create)]
+        (put-db update update-c)
+        (prn (<! update-c))
+        (>! response-c (make-response to-create))))
     response-promise)) ; make it an async function handler to avoid callback hell

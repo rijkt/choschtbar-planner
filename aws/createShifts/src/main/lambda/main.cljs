@@ -39,7 +39,7 @@
 
 (defn put-db [update update-c]
   (let [body (js/JSON.stringify (clj->js update))
-        cmd-input  #js {"Bucket" "choschtbar-data" "Key" "db.json" "Body" body}
+        cmd-input #js {"Bucket" "choschtbar-data" "Key" "db.json" "Body" body}
         cmd (PutObjectCommand. cmd-input)]
     (go
       (prn (js/JSON.stringify cmd-input))

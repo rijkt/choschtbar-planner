@@ -31,19 +31,21 @@
      (accountant/navigate! "detail")))
 
 (defn cal [shifts dispatch-shifts localizer dispatch-selected]
-  (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"]
-        (->>  (<! (http/post api {:with-credentials? false}))
-              :body ; array of shifts
-              (map (fn [shift] [(:id shift) shift]))
-              (into shifts)
-              (dispatch-shifts))))
-  (fn [shifts dispatch-shifts localizer dispatch-selected]
-    (let [events (map to-event (vals shifts))
-          messages {:month "Monat" :today "Heute" :previous nil :next nil ; replaced with icons in css
-                    :date "Datum" :time "Zeit" :event "Tour"}]
-      [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
-                                             :style {:height 700} ; bind default view to media query
-                                             :views {:month true :agenda true}
-                                             :messages messages :selectable true
-                                             :onSelectEvent (select-event dispatch-selected)
-                                             :eventPropGetter make-event-style}])))
+  (let [mobile? (.-matches (js/window.matchMedia "(max-width: 600px)"))]
+    (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"]
+          (->>  (<! (http/post api {:with-credentials? false}))
+                :body ; array of shifts
+                (map (fn [shift] [(:id shift) shift]))
+                (into shifts)
+                (dispatch-shifts))))
+    (fn [shifts dispatch-shifts localizer dispatch-selected]
+      (let [events (map to-event (vals shifts))
+            messages {:month "Monat" :today "Heute" :previous nil :next nil ; replaced with icons in css
+                      :date "Datum" :time "Zeit" :event "Tour"}]
+        [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
+                                               :style {:height 700} ; bind default view to media query
+                                               :views {:month true :agenda true}
+                                               :defaultView (if mobile? "agenda" "month")
+                                               :messages messages :selectable true
+                                               :onSelectEvent (select-event dispatch-selected)
+                                               :eventPropGetter make-event-style}]))))

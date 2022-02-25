@@ -38,12 +38,12 @@
               (into shifts)
               (dispatch-shifts))))
   (fn [shifts dispatch-shifts localizer dispatch-selected]
-     (let [events (map to-event (vals shifts))
-           messages {:month "Monat" :today "Heute" :previous "Zurück" :next "Weiter"
-                     :date "Datum" :time "Zeit" :event "Tour"}]
-       [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
-                                              :style {:height 700}
-                                              :views {:month true :agenda true}
-                                              :messages messages :selectable true
-                                              :onSelectEvent (select-event dispatch-selected)
-                                              :eventPropGetter make-event-style}])))
+    (let [events (map to-event (vals shifts))
+          messages {:month "Monat" :today "Heute" :previous nil :next nil ; replaced with icons in css
+                    :date "Datum" :time "Zeit" :event "Tour"}]
+      [(reagent/adapt-react-class Calendar) {:localizer localizer :events events
+                                             :style {:height 700} ; bind default view to media query
+                                             :views {:month true :agenda true}
+                                             :messages messages :selectable true
+                                             :onSelectEvent (select-event dispatch-selected)
+                                             :eventPropGetter make-event-style}])))

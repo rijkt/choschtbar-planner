@@ -10,7 +10,8 @@
 (defn make-response [shift] 
   (clj->js {:statusCode 201
             :body       (js/JSON.stringify (clj->js shift))
-            :headers    {"Content-Type" "application/json"}}))
+            :headers    {"Content-Type" "application/json"
+                         "Access-Control-Allow-Origin" "*"}}))
 
 (defn get-body [event]
   (-> event

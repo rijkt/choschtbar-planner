@@ -24,11 +24,12 @@
                 :notes (:notes @s)}
           response-chan (chan 1 (map :status))]
       (go
+        (swap! s assoc :response nil)
         (-> "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/create-shift"
             (http/post {:json-params body :with-credentials? false :channel response-chan}))
         (swap! s assoc :response (<! response-chan))))))
 
-(defonce s (atom {:response ""}))
+(defonce s (atom {}))
 
 (defn root []
   (fn []
@@ -51,4 +52,7 @@
      [:label {:for :color} "Farbe"] ; todo: preselected values
      [:input {:type :color :name :color :required true :on-change (assoc-for :color s)}]
      [:input {:type :submit :name :create :value "Schicht eintragen"}]
-     [:p (str (:response @s))]]))
+     [:div (condp = (:response @s)
+           nil nil
+           201 [:p.bg-green-500 "Erfolgreich erfasst"]
+           [:p.bg-red-500 "Ein Fehler ist aufgetreten!"])]]))

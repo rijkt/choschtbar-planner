@@ -54,5 +54,5 @@
      [:input {:type :submit :name :create :value "Schicht eintragen"}]
      [:div (condp = (:response @s)
            nil nil
-           201 [:p.bg-green-500 "Erfolgreich erfasst"]
-           [:p.bg-red-500 "Ein Fehler ist aufgetreten!"])]]))
+           201 [:p.bg-green-500.text-center "Erfolgreich erfasst"]
+           [:p.bg-red-500.text-center "Ein Fehler ist aufgetreten!"])]]))

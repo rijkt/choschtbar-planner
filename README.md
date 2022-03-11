@@ -15,9 +15,7 @@ yarn watch
 ``` shell
 yarn clean
 
-yarn release
-
-yarn build-css
+REDIRECT_URI="<URL>"; yarn release
 
 aws s3 sync public/ s3://choschtbar-planner
 ```

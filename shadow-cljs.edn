@@ -33,4 +33,6 @@
          :http-root    "public"
          :http-port    8700
          :preloads     [devtools.preload]}
+
+        :closure-defines {choschtbar-planner.auth/REDIRECT-URI #env "REDIRECT_URI"}
         }}}

@@ -20,12 +20,13 @@
       (get "code")))
 
 (defn authenticate! []
-  (when (and (nil? (:auth @auth-state))
+  (when (and (nil? (:id_token @auth-state))
              (nil? (read-code!)))
     (set! (.. js/window -location -href)
           (str authorization-url "/oauth2/authorize?"
                "client_id=" client-id
-               "&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&"
+               "&response_type=code"
+               "&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&"
                "redirect_uri=" REDIRECT-URI))))
 
 (defn logout! []
@@ -45,4 +46,4 @@
                           :redirect_uri REDIRECT-URI}
             response-chan (chan 1 (map :body))]
         (http/post token-url {:form-params form-params :with-credentials? false :channel response-chan})
-        (swap! auth-state assoc :auth (<! response-chan)))))) ; todo: flatten?
+        (swap! auth-state merge (<! response-chan)))))) ; todo: snake to kebab case

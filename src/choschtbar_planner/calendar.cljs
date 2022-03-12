@@ -30,15 +30,15 @@
      (dispatch (js->clj %1 :keywordize-keys true))
      (accountant/navigate! "detail")))
 
-(defn cal [shifts dispatch-shifts localizer dispatch-selected]
+(defn cal [shifts dispatch-shifts localizer dispatch-selected access-token]
   (let [mobile? (.-matches (js/window.matchMedia "(max-width: 600px)"))]
     (go (let [api "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/getShifts"]
-          (->>  (<! (http/post api {:with-credentials? false}))
+          (->>  (<! (http/post api {:with-credentials? false :oauth-token access-token}))
                 :body ; array of shifts
                 (map (fn [shift] [(:id shift) shift]))
                 (into shifts)
                 (dispatch-shifts))))
-    (fn [shifts dispatch-shifts localizer dispatch-selected]
+    (fn [shifts dispatch-shifts localizer dispatch-selected access-token]
       (let [events (map to-event (vals shifts))
             messages {:month "Monat" :today "Heute" :previous nil :next nil ; replaced with icons in css
                       :date "Datum" :time "Zeit" :event "Tour"}]

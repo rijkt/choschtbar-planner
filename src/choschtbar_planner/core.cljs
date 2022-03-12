@@ -31,9 +31,9 @@
    [:div.mt-6
     (match [(:path @app-state)]
            [(:or nil "/")] [choschtbar-planner.calendar/cal (:shifts @app-state) #(swap! app-state assoc :shifts %)
-                            (:localizer @app-state) #(swap! app-state assoc :selected %)]
+                            (:localizer @app-state) #(swap! app-state assoc :selected %) (:access_token @auth/auth-state)]
            ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @app-state) (:id (:selected @app-state))))
-           ["admin"] [choschtbar-planner.admin/root]
+           ["admin"] [choschtbar-planner.admin/root (:access_token @auth/auth-state)]
            :else [:p "404"])]])
 
 

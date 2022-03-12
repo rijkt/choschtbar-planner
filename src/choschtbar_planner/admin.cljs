@@ -10,7 +10,7 @@
 (defn- to-unix [date time]
   (.unix (moment (str date "T" time))))
 
-(defn- submit [s]
+(defn- submit [s access-token]
   (fn [e]
     (.preventDefault e)
                                         ; form-wide validation via e.target goes here
@@ -26,14 +26,15 @@
       (go
         (swap! s assoc :response nil)
         (-> "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/create-shift"
-            (http/post {:json-params body :with-credentials? false :channel response-chan}))
+            (http/post {:json-params body :with-credentials? false :oauth-token access-token
+                        :channel response-chan}))
         (swap! s assoc :response (<! response-chan))))))
 
 (defonce s (atom {}))
 
-(defn root []
-  (fn []
-    [:form.grid.grid-cols-2.gap-2 {:on-submit (submit s)}
+(defn root [access-token]
+  (fn [access-token]
+    [:form.grid.grid-cols-2.gap-2 {:on-submit (submit s access-token)}
      [:label {:for :tour} "Tour"]
      [:input.border-green-800.border-2.border-solid.rounded-md
       {:type :text :name :tour :required true :on-change (assoc-for :tour s)}]

@@ -34,5 +34,5 @@
          :http-port    8700
          :preloads     [devtools.preload]}
 
-        :closure-defines {choschtbar-planner.auth/REDIRECT-URI #env "REDIRECT_URI"}
+        :closure-defines {choschtbar-planner.auth/REDIRECT-URI #shadow/env "REDIRECT_URI"}
         }}}

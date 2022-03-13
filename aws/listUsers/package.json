@@ -1,0 +1,19 @@
+{
+    "name": "listUsers",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "clean": "rm -r dist",
+        "build": "shadow-cljs release :lambda --debug",
+        "lint": "clj-kondo --lint src",
+        "predeploy": "yarn run lint && yarn run build",
+        "deploy": "zip -r dist/lambda/lambda.zip node_modules package.json && cd dist/lambda && zip lambda.zip index.js && aws lambda update-function-code --function-name list-users --zip-file fileb://lambda.zip "
+    },
+    "devDependencies": {
+        "shadow-cljs": "2.17.2"
+    },
+    "dependencies": {
+        "@aws-sdk/client-cognito-identity-provider": "^3.54.0",
+        "node-fetch": "2"
+    }
+}

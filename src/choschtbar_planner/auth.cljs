@@ -1,7 +1,8 @@
 (ns choschtbar-planner.auth
-  (:require [cemerick.url :refer (url url-encode)]
-            [cljs.core.async :refer [go chan <!]]
-            [cljs-http.client :as http]))
+  (:require [cemerick.url :refer (url)]
+            [cljs.core.async :refer [go chan <! >!]]
+            [cljs-http.client :as http]
+            ["jwt-decode" :as jwt-decode]))
 
 (defonce auth-state (atom {}))
 
@@ -36,7 +37,7 @@
 
 (defn get-token!
   "Call token endpoint if code url param is present"
-  []
+  [access-token-c]
   (when-let [code (read-code!)]
     (go
       (let [token-url (str authorization-url "/oauth2/token")
@@ -46,4 +47,14 @@
                           :redirect_uri REDIRECT-URI}
             response-chan (chan 1 (map :body))]
         (http/post token-url {:form-params form-params :with-credentials? false :channel response-chan})
-        (swap! auth-state merge (<! response-chan)))))) ; todo: snake to kebab case
+        (let [response (<! response-chan)]
+          (swap! auth-state merge response)
+          (>! access-token-c (:access_token response))))))) ; todo: snake to kebab case
+
+(defn is-admin [id-token]
+  (when id-token
+    (-> id-token
+        jwt-decode
+        (js->clj :keywordize-keys true)
+        :cognito:groups
+        (= ["Admin"]))))

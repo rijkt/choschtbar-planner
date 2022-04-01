@@ -5,6 +5,8 @@
 
  :dependencies []
 
+ :nrepl        {:port 8777}
+
  :builds
  {:lambda {:target :node-library
            :output-to "./dist/lambda/index.js"

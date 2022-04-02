@@ -15,7 +15,7 @@ yarn watch
 ``` shell
 yarn clean
 
-REDIRECT_URI="<URL>"; yarn release
+export REDIRECT_URI="<URL>"; yarn release
 
 aws s3 sync public/ s3://choschtbar-planner
 ```

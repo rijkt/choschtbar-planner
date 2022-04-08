@@ -1,6 +1,6 @@
 (ns choschtbar-planner.core
   (:require [reagent.core :as reagent :refer [atom]]
-            [cljs.core.async :refer [chan]]
+            [cljs.core.async :refer [go chan <!]]
             ["moment" :as moment]
             ["moment/locale/de-ch" :as locale] ; import side effect: enables locale
             ["react-big-calendar" :refer (momentLocalizer)]
@@ -9,6 +9,7 @@
             [choschtbar-planner.auth :as auth]
             [choschtbar-planner.calendar]
             [choschtbar-planner.shifts :as shifts]
+            [choschtbar-planner.users :as users]
             [choschtbar-planner.shift-detail]
             [choschtbar-planner.admin]))
 
@@ -45,9 +46,11 @@
   (moment/locale "de-CH") ; set up locale configuration
   (swap! app-state assoc :localizer (momentLocalizer moment)) ; save configured localizer
   (auth/authenticate!)
-  (let [access-token-chan (chan 1)]
-    (auth/get-token! access-token-chan)
-    (shifts/initial-fetch! access-token-chan))
+  (let [access-token-chan (auth/get-token!)]
+    (go
+      (let [access-token (<! access-token-chan)]
+        (shifts/initial-fetch! access-token)
+        (users/initial-fetch! access-token))))
   (accountant/configure-navigation!
    {:nav-handler (fn [path] (swap! app-state assoc :path path))
     :path-exists? (fn [path] true)}) ; todo: integrate bidi

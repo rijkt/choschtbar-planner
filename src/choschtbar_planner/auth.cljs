@@ -37,19 +37,21 @@
 
 (defn get-token!
   "Call token endpoint if code url param is present"
-  [access-token-c]
-  (when-let [code (read-code!)]
-    (go
-      (let [token-url (str authorization-url "/oauth2/token")
-            form-params  {:grant_type "authorization_code"
-                          :code code
-                          :client_id client-id
-                          :redirect_uri REDIRECT-URI}
-            response-chan (chan 1 (map :body))]
-        (http/post token-url {:form-params form-params :with-credentials? false :channel response-chan})
-        (let [response (<! response-chan)]
-          (swap! auth-state merge response)
-          (>! access-token-c (:access_token response))))))) ; todo: snake to kebab case
+  []
+  (let [token-channel (chan 1)]
+    (when-let [code (read-code!)]
+      (go
+        (let [token-url (str authorization-url "/oauth2/token")
+              form-params  {:grant_type "authorization_code"
+                            :code code
+                            :client_id client-id
+                            :redirect_uri REDIRECT-URI}
+              response-chan (chan 1 (map :body))]
+          (http/post token-url {:form-params form-params :with-credentials? false :channel response-chan})
+          (let [response (<! response-chan)]
+            (swap! auth-state merge response)
+            (>! token-channel (:access_token response))))))  ; todo: snake to kebab case
+    token-channel))
 
 (defn is-admin [id-token]
   (when id-token

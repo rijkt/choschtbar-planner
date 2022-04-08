@@ -10,7 +10,7 @@
         "deploy": "zip -r dist/lambda/lambda.zip node_modules package.json && cd dist/lambda && zip lambda.zip index.js && aws lambda update-function-code --function-name list-users --zip-file fileb://lambda.zip "
     },
     "devDependencies": {
-        "shadow-cljs": "2.17.2"
+        "shadow-cljs": "^2.17.8"
     },
     "dependencies": {
         "@aws-sdk/client-cognito-identity-provider": "^3.54.0",

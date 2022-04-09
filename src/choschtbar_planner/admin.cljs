@@ -19,7 +19,7 @@
                 :startTime (to-unix date (:start-time @s))
                 :endTime (to-unix date (:end-time @s)) 
                 :color (:color @s)
-                :volunteer nil
+                :volunteer (:volunteer @s)
                 :location (:tour @s)
                 :notes (:notes @s)}
           response-chan (chan 1 (map :status))]
@@ -48,8 +48,8 @@
      [:label {:for :end-time} "Bis"]
      [:input {:type :time :name :end-time :required true :on-change (assoc-for :end-time s)}]
      [:label {:for :volunteer} "Freiwillige*r"]
-     [:select {:name :volunteer :required true}
-      (map (fn [user] [:option (:nickname user)]) users)]
+     [:select {:name :volunteer :required true :on-change (assoc-for :volunteer s)}
+      (map (fn [user] [:option {:label (:nickname user) :value (:sub user)}]) users)]
      [:label {:for :color} "Farbe"] ; todo: preselected values
      [:input {:type :color :name :color :required true :on-change (assoc-for :color s)}]
      [:input {:type :submit :name :create :value "Schicht eintragen"}]

@@ -32,8 +32,8 @@
 
 (defonce s (atom {}))
 
-(defn root [access-token]
-  (fn [access-token]
+(defn root [access-token users]
+  (fn [access-token users]
     [:form.grid.grid-cols-2.gap-2 {:on-submit (submit s access-token)}
      [:label {:for :tour} "Tour"]
      [:input.border-green-800.border-2.border-solid.rounded-md
@@ -49,7 +49,7 @@
      [:input {:type :time :name :end-time :required true :on-change (assoc-for :end-time s)}]
      [:label {:for :volunteer} "Freiwillige*r"]
      [:select {:name :volunteer :required true}
-      [:option "Maxine Muster"]]
+      (map (fn [user] [:option (:nickname user)]) users)]
      [:label {:for :color} "Farbe"] ; todo: preselected values
      [:input {:type :color :name :color :required true :on-change (assoc-for :color s)}]
      [:input {:type :submit :name :create :value "Schicht eintragen"}]

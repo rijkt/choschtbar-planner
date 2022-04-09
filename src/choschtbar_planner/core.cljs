@@ -39,7 +39,7 @@
                             #(swap! app-state assoc :selected %)]
            ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @shifts/state)
                                                                    (:id (:selected @app-state))))
-           ["admin"] [choschtbar-planner.admin/root (:access_token @auth/auth-state)]
+           ["admin"] [choschtbar-planner.admin/root (:access_token @auth/auth-state) (:users @users/state)]
            :else [:p "404"])]])
 
 (defn start []

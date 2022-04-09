@@ -3,7 +3,7 @@
             [cljs-http.client :as http]
             [cljs.core.async :refer [go <!]]))
 
-(defonce state (atom {:users {}}))
+(defonce state (atom {:users []}))
 
 (defn initial-fetch! [access-token]
   (go

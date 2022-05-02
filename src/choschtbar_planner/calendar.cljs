@@ -29,7 +29,7 @@
 
 (defn cal [shifts localizer dispatch-selected]
   (let [mobile? (.-matches (js/window.matchMedia "(max-width: 600px)"))
-        events (map to-event (vals shifts))
+        events (map to-event shifts)
         messages {:month "Monat" :today "Heute" :previous nil :next nil ; replaced with icons in css
                   :date "Datum" :time "Zeit" :event "Tour"}]
     [(reagent/adapt-react-class Calendar) {:localizer localizer :events events

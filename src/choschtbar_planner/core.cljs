@@ -1,17 +1,17 @@
 (ns choschtbar-planner.core
-  (:require [reagent.core :as reagent :refer [atom]]
-            [cljs.core.async :refer [go chan <!]]
+  (:require [accountant.core :as accountant]
+            [choschtbar-planner.admin]
             ["moment" :as moment]
-            ["moment/locale/de-ch" :as locale] ; import side effect: enables locale
+            ["moment/locale/de-ch" :as locale]              ; import side effect: enables locale
             ["react-big-calendar" :refer (momentLocalizer)]
-            [accountant.core :as accountant]
-            [clojure.core.match :refer (match)]
             [choschtbar-planner.auth :as auth]
             [choschtbar-planner.calendar]
+            [choschtbar-planner.shift-detail]
             [choschtbar-planner.shifts :as shifts]
             [choschtbar-planner.users :as users]
-            [choschtbar-planner.shift-detail]
-            [choschtbar-planner.admin]))
+            [cljs.core.async :refer [<! chan go]]
+            [clojure.core.match :refer (match)]
+            [reagent.core :as reagent :refer [atom]]))
 
 (defonce app-state (atom {:selected nil})) ; todo: split up
 
@@ -21,26 +21,29 @@
     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
      {:onClick #(accountant/navigate! "/")} "Meine Touren"]
     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
-     "Alle Touren"]
+     {:onClick #(accountant/navigate! "/all")} "Alle Touren"]
     (when admin?
       [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
        {:onClick #(accountant/navigate! "admin")} "Administration"])
     [:li.text-sm.font-sans.font-semibold.hover:text-green-500.mx-5.cursor-pointer
-     {:onClick logout} "Logout"]]     
+     {:onClick logout} "Logout"]]
    [:hr]])
 
 (defn main []
-  [:div
-   [nav-bar auth/logout! (auth/is-admin (:id_token @auth/auth-state))]
-   [:div.mt-6
-    (match [(:path @app-state)]
-           [(:or nil "/")] [choschtbar-planner.calendar/cal (:shifts @shifts/state)
-                            (:localizer @app-state)
-                            #(swap! app-state assoc :selected %)]
-           ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @shifts/state)
-                                                                   (:id (:selected @app-state))))
-           ["admin"] [choschtbar-planner.admin/root (:access_token @auth/auth-state) (:users @users/state)]
-           :else [:p "404"])]])
+      [:div
+       [nav-bar auth/logout! (auth/is-admin (:id_token @auth/auth-state))]
+       [:div.mt-6
+        (match [(:path @app-state)]
+               [(:or nil "/")] [choschtbar-planner.calendar/cal
+                                (shifts/by-id (auth/read-sub (:id_token @auth/auth-state)) (:shifts @shifts/state))
+                                (:localizer @app-state)
+                                #(swap! app-state assoc :selected %)]
+               ["/all"] [choschtbar-planner.calendar/cal (vals (:shifts @shifts/state)) (:localizer @app-state)
+                         #(swap! app-state assoc :selected %)]
+               ["detail"] (choschtbar-planner.shift-detail/detail (get (:shifts @shifts/state)
+                                                                       (:id (:selected @app-state))))
+               ["admin"] [choschtbar-planner.admin/root (:access_token @auth/auth-state) (:users @users/state)]
+               :else [:p "404"])]])
 
 (defn start []
   (moment/locale "de-CH") ; set up locale configuration

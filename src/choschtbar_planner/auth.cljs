@@ -1,7 +1,7 @@
 (ns choschtbar-planner.auth
   (:require [cemerick.url :refer (url)]
-            [cljs.core.async :refer [go chan <! >!]]
             [cljs-http.client :as http]
+            [cljs.core.async :refer [<! >! chan go]]
             ["jwt-decode" :as jwt-decode]))
 
 (defonce auth-state (atom {}))
@@ -60,3 +60,10 @@
         (js->clj :keywordize-keys true)
         :cognito:groups
         (= ["Admin"]))))
+
+(defn read-sub [id-token]
+ (when id-token
+   (-> id-token
+     jwt-decode
+     (js->clj :keywordize-keys true)
+     :sub)))

@@ -1,7 +1,7 @@
 (ns choschtbar-planner.shifts
-  (:require [reagent.core :as reagent :refer [atom]]
-            [cljs-http.client :as http]
-            [cljs.core.async :refer [go <!]]))
+  (:require [cljs-http.client :as http]
+            [cljs.core.async :refer [<! go]]
+            [reagent.core :as reagent :refer [atom]]))
 
 (defonce state (atom {:shifts {}}))
 
@@ -13,3 +13,6 @@
            (map (fn [shift] [(:id shift) shift]))
            (into (:shifts @state))
            (swap! state assoc :shifts)))))
+
+(defn by-id [id shifts]
+      (filter #(= (:volunteer %) id) (vals shifts)))

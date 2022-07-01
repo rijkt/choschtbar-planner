@@ -48,7 +48,7 @@
      [:label {:for :end-time} "Bis"]
      [:input {:type :time :name :end-time :required true :on-change (assoc-for :end-time s)}]
      [:label {:for :volunteer} "Freiwillige*r"]
-     [:select {:name :volunteer :required true :on-change (assoc-for :volunteer s)}
+     [:select {:name :volunteer :on-change (assoc-for :volunteer s)}
       [:option {:label "Nicht zugewiesen" :value nil}]
       (map (fn [user] [:option {:label (:nickname user) :value (:sub user)}]) users)]
      [:label {:for :color} "Farbe"] ; todo: preselected values

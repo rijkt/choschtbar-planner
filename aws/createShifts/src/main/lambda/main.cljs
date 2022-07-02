@@ -56,7 +56,7 @@
     (get-db db-c)
     (prn to-create)
     (go
-      (let [update (update-in (<! db-c) [:shifts] conj to-create)]
+      (let [update (update-in (<! db-c) [:shifts (:id to-create)] conj to-create)]
         (put-db update update-c)
         (prn (<! update-c))
         (>! response-c (make-response to-create))))

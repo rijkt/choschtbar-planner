@@ -29,8 +29,9 @@ export const handler = async () => {
             responseBuffer += toUtf8(record);
         }
     }
-    const parsed =  JSON.parse(responseBuffer);
-    const body = parsed.shifts.filter(item => item) // filter out null values and flatten
+    const parsed =  JSON.parse(responseBuffer); // { [id]: shift }
+    const shifts = Object.values(parsed.shifts);
+    const body = shifts.filter(item => item) // filter out null values and flatten
     const response = {
         statusCode: 200,
         headers: {

@@ -20,4 +20,4 @@ pom.xml.asc
 /public/styles.css
 .rebel_readline_history
 *.zip
-
+.idea

@@ -3,7 +3,8 @@
    ["@aws-sdk/client-s3" :refer (S3Client GetObjectCommand PutObjectCommand)]
    ["node-fetch" :refer (Response)]
    [cljs.core.async :refer [go <! >! chan put!]]
-   [cljs.core.async.interop :refer-macros [<p!]]))
+   [cljs.core.async.interop :refer-macros [<p!]]
+   [cljs.spec.alpha :as s]))
 
 (def ^js client (S3Client. (clj->js {:region "eu-central-1"})))
 
@@ -47,6 +48,20 @@
       (>! update-c (-> (.send client cmd)
                        (<p!)))))) ; don't parse the response for now
 
+(s/def :shift/id string?)
+(s/def :shift/month string?)
+(s/def :shift/startTime int?)
+(s/def :shift/endTime int?)
+(s/def :shift/color string?)
+(s/def :shift/volunteer (s/nilable string?))
+(s/def :shift/location string?)
+(s/def :shift/notes string?)
+(s/def :shift/saved (s/keys :req-un [:shift/id :shift/month :shift/startTime :shift/endTime
+                                     :shift/color :shift/location :shift/notes]
+                            :opt-un [:shift/volunteer]))
+(s/def :shift/shifts (s/map-of keyword? :shift/saved))
+(s/def :shift/db (s/keys :req-un [:shifts/shifts]))
+
 (defn handler [event]
   (let [to-create (get-body event) ; todo: add validation
         response-c (chan 1)
@@ -58,6 +73,8 @@
     (go
       (let [existing (<! db-c)
             update (assoc-in existing [:shifts (:id to-create)] to-create)]
+        (when (not (s/valid? :shift/db update))
+          (throw (ex-info "Invalid db state" (s/explain-data :shift/db update))))
         (put-db update update-c)
         (prn (<! update-c))
         (>! response-c (make-response to-create))))

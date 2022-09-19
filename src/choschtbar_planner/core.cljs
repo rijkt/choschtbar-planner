@@ -52,7 +52,7 @@
   (let [access-token-chan (auth/get-token!)]
     (go
       (let [access-token (<! access-token-chan)]
-        (shifts/initial-fetch! access-token)
+        (shifts/fetch-shifts! access-token)
         (users/initial-fetch! access-token))))
   (accountant/configure-navigation!
    {:nav-handler (fn [path] (swap! app-state assoc :path path))

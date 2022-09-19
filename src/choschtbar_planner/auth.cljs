@@ -39,7 +39,7 @@
   "Call token endpoint if code url param is present"
   []
   (let [token-channel (chan 1)]
-    (when-let [code (read-code!)]
+    (when-let [code (read-code!)] ; todo: clear code/navigate after success
       (go
         (let [token-url (str authorization-url "/oauth2/token")
               form-params  {:grant_type "authorization_code"
@@ -52,6 +52,9 @@
             (swap! auth-state merge response)
             (>! token-channel (:access_token response))))))  ; todo: snake to kebab case
     token-channel))
+
+(defn read-token []
+  (:access_token @auth-state))
 
 (defn is-admin [id-token]
   (when id-token

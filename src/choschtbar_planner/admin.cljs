@@ -1,5 +1,6 @@
 (ns choschtbar-planner.admin
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [choschtbar-planner.shifts :as shifts]
+            [reagent.core :as reagent :refer [atom]]
             [cljs.core.async :refer [go chan <!]]
             [cljs-http.client :as http]
             ["moment" :as moment]))
@@ -15,7 +16,8 @@
     (.preventDefault e)
                                         ; form-wide validation via e.target goes here
     (let [date (:date @s)
-          body {:month (.substring date 0 7) ; YYYY-MM
+          month (.substring date 0 7) ; YYYY-MM
+          body {:month month
                 :startTime (to-unix date (:start-time @s))
                 :endTime (to-unix date (:end-time @s)) 
                 :color (:color @s)
@@ -25,10 +27,9 @@
           response-chan (chan 1 (map :status))]
       (go
         (swap! s assoc :response nil)
-        (-> "https://hybndamir4.execute-api.eu-central-1.amazonaws.com/default/create-shift"
-            (http/post {:json-params body :with-credentials? false :oauth-token access-token
-                        :channel response-chan}))
-        (swap! s assoc :response (<! response-chan))))))
+        (shifts/create-shift! body access-token response-chan)
+        (swap! s assoc :response (<! response-chan))
+        (shifts/fetch-shifts! access-token {:month month})))))
 
 (defonce s (atom {}))
 

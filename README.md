@@ -41,3 +41,10 @@ aws lambda invoke --function-name <lambda-name> /tmp/outfile
 
 jq . /tmp/outfile
 ```
+## Maintenance
+Find outdated dependencies
+```shell
+yarn outdated
+
+clojure -Tantq outdated
+```

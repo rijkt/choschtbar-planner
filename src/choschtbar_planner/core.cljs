@@ -11,7 +11,8 @@
             [choschtbar-planner.users :as users]
             [cljs.core.async :refer [<! chan go]]
             [clojure.core.match :refer (match)]
-            [reagent.core :as reagent :refer [atom]]))
+            [reagent.core :as reagent :refer [atom]]
+            [reagent.dom :as dom]))
 
 (defonce app-state (atom {:selected nil})) ; todo: split up
 
@@ -57,8 +58,8 @@
   (accountant/configure-navigation!
    {:nav-handler (fn [path] (swap! app-state assoc :path path))
     :path-exists? (fn [path] true)}) ; todo: integrate bidi
-  (reagent/render-component [main]
-                            (. js/document (getElementById "app"))))
+  (dom/render [main]
+                  (. js/document (getElementById "app"))))
 
 (defn ^:export init []
   ;; init is called ONCE when the page loads
